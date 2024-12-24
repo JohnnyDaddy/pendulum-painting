@@ -23,37 +23,40 @@ class Pendulum {
     }
 
     update() {
-        // 각도 업데이트
+        this.updateAngle();
+        this.updateTwist();
+        this.updateShrinkRate();
+        this.updateRadii();
+        this.draw();
+    }
+
+    updateAngle() {
         this.angle += this.angularVelocity;
+    }
 
-        // 타원의 각도를 조금씩 비틂
+    updateTwist() {
         this.currentTwist += this.twistAngle / (2 * Math.PI / this.angularVelocity);
+    }
 
-        // 반지름 감소율 가속도 적용
+    updateShrinkRate() {
         this.shrinkRate += this.shrinkAcceleration;
+    }
 
-        // 반지름 감소
-        this.radiusX -= this.shrinkRate;
-        this.radiusY -= this.shrinkRate;
-        if (this.radiusX < this.minimumRadiusX) {
-            this.radiusX = this.minimumRadiusX;
-        }
-        if (this.radiusY < this.minimumRadiusY) {
-            this.radiusY = this.minimumRadiusY;
-        }
+    updateRadii() {
+        this.radiusX = Math.max(this.minimumRadiusX, this.radiusX - this.shrinkRate);
+        this.radiusY = Math.max(this.minimumRadiusY, this.radiusY - this.shrinkRate);
+    }
 
-        // 타원의 각도를 기울여서 계산
-        const currentX = this.getX(); // 현재 X 좌표 계산
-        const currentY = this.getY(); // 현재 Y 좌표 계산
+    draw() {
+        const currentX = this.getX();
+        const currentY = this.getY();
 
-        // 선 그리기
         ctx.beginPath();
         ctx.moveTo(this.prevX, this.prevY);
         ctx.lineTo(currentX, currentY);
         ctx.strokeStyle = this.strokeColor;
         ctx.stroke();
 
-        // 이전 좌표 업데이트
         this.prevX = currentX;
         this.prevY = currentY;
     }
